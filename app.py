@@ -1,6 +1,7 @@
 import socket
-import CoAP_message as COAP
 import CoAP_encoder
+import CoAP_decoder
+import CoAP_binary
 
 HOSTNAME = "coap.me"
 PORT = 5683
@@ -25,20 +26,24 @@ bit_packet = (
     )
 
 
-print(f'{bit_packet=}')
+#print(f'{bit_packet=}')
 bytes_packet = int(bit_packet,2).to_bytes(9, byteorder='big')
-print(f'{bytes_packet=}')
+#print(f'{bytes_packet=}')
 
 built_packet = CoAP_encoder.build_packet('GET', 11, 'test')
 
 client_socket.send(built_packet)
 
-data = client_socket.recv(1024)
-print(data)
-
-data_1 = data[0]
-print(data_1)
-print(format(data_1, '08b'))
-
+recieved_data = client_socket.recv(1024)
+print(f'{recieved_data=}')
 
 #print(CoAP_encoder.build_packet('GET', 11, 'test'))
+
+decoded_packet = CoAP_decoder.decode_packet(recieved_data)
+print(decoded_packet)
+
+version = CoAP_binary.get_name('version', '01')
+print(version)
+
+version_bits = CoAP_binary.get_bits('version', 'Version 1')
+print(version_bits)

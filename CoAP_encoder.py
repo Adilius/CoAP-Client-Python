@@ -1,29 +1,26 @@
-import CoAP_message as COAP
-
-
 def build_packet(method: str, option: int, option_value):
 
     # Version
-    version = COAP.VERSION.SUPPORTED
+    version = "01"
 
     # Type
-    message_type = COAP.TYPE.CON
+    message_type = "00"
 
     # Token length
-    token_length = COAP.TOKEN_LENGTH.ZERO
+    token_length = "0000"
 
-    # Request Method
+    # Request Code
     if method == "GET":
-        method = COAP.REQUEST_CODE.GET
+        method = "00000001"
     if method == "POST":
-        method = COAP.REQUEST_CODE.POST
+        method = "00000010"
     if method == "PUT":
-        method = COAP.REQUEST_CODE.PUT
+        method = "00000011"
     if method == "DELETE":
-        method = COAP.REQUEST_CODE.DELETE
+        method = "00000100"
 
     # Message ID
-    message_id = COAP.MESSAGE_ID.NONE
+    message_id = "0000000000000000"
 
     # Option delta & option delta extendend
     if 0 <= option or option <= 12:
