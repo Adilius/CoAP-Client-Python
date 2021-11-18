@@ -1,78 +1,80 @@
-def build_packet(method: str, option: int, option_value):
+import CoAP_binary
+
+def build_packet(
+    method: str,
+    option: int,
+    option_value: str,
+    payload: str):
+
+    packet = ''
 
     # Version
-    version = "01"
+    version = CoAP_binary.get_bits('version', '1')
+    packet += version
 
     # Type
-    message_type = "00"
+    message_type = CoAP_binary.get_bits('type', 'Confirmable')
+    packet += message_type
 
     # Token length
     token_length = "0000"
+    packet += token_length
 
-    # Request Code
-    if method == "GET":
-        method = "00000001"
-    if method == "POST":
-        method = "00000010"
-    if method == "PUT":
-        method = "00000011"
-    if method == "DELETE":
-        method = "00000100"
+    # Request code
+    method = CoAP_binary.get_bits('req_res_code', method)
+    packet += method
 
     # Message ID
     message_id = "0000000000000000"
+    packet += message_id
 
-    # Option delta & option delta extendend
+    # Option delta & option delta extended
+    option_delta = ""
+    option_delta_extended = ""
     if 0 <= option or option <= 12:
         option_delta = int_to_bits(option, 4)
-        option_delta_extended = ""
     elif 13 <= option or option <= 268:
         option_delta = int_to_bits(13, 4)
         option_delta_extended = int_to_bits(option - 13, 8)
     else:
         option_delta = int_to_bits(14, 4)
         option_delta_extended = int_to_bits(option - 269, 16)
+    packet += option_delta
 
     # Option length
-    if isinstance(option_value, str):
-        value_length = len(option_value)
-    # TODO implement uint
-    else:
-        pass
-
+    value_length = len(option_value)
+    option_length = ""
+    option_length_extended = ""
     if 0 <= value_length or value_length <= 12:
         option_length = int_to_bits(value_length, 4)
-        option_length_extended = ""
     elif 13 <= option or option <= 268:
         option_length = int_to_bits(13, 4)
         option_length_extended = int_to_bits(value_length - 13, 4)
     else:
         option_length = int_to_bits(14, 4)
         option_length_extended = int_to_bits(value_length - 169, 4)
+    packet += option_length
+    packet += option_delta_extended
+    packet += option_length_extended
+
 
     # Option Value
     if value_length != 0:
         option_value = string_to_bits(option_value)
-        pass
-    else:
-        option_value = ""
+        packet += option_value
 
-    bit_packet = (
-        version
-        + message_type
-        + token_length
-        + method
-        + message_id
-        + option_delta
-        + option_length
-        + option_delta_extended
-        + option_length_extended
-        + option_value
-    )
+    # If we have payload
+    if payload:
+        packet += "11111111" #payload marker
+        packet += string_to_bits(payload)   #add payload
 
-    byte_packet = int(bit_packet, 2).to_bytes((len(bit_packet) + 7) // 8, byteorder='big')
+    encoded_packet = int(packet, 2).to_bytes((len(packet) + 7) // 8, byteorder='big')
+    print(f'Sent packet: {encoded_packet}')
+    print((
+        ''
+    ))
 
-    return byte_packet
+    return encoded_packet
 
 
 def int_to_bits(value: int, length: int):

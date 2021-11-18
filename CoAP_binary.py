@@ -8,8 +8,13 @@ def get_name(header_name: str, bits: str):
 
     header = headers.get(header_name)
 
-    name = [k for k,v in header.items() if v == bits][0]
+    name = [k for k,v in header.items() if v == bits]
 
+    if len(name) > 0:
+        name = name[0]
+    else:
+        name = "Unknown"
+        
     return name
 
 def get_bits(header_name: str, name: str):
@@ -27,10 +32,10 @@ def get_bits(header_name: str, name: str):
     return bits
 
 version = {
-    'Version 0': '00',
-    'Version 1': '01',
-    'Version 2': '10',
-    'Version 3': '11',
+    '0': '00',
+    '1': '01',
+    '2': '10',
+    '3': '11',
 }
 
 type = {
