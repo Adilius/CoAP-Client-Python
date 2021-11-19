@@ -69,10 +69,7 @@ def build_packet(
         packet += string_to_bits(payload)   #add payload
 
     encoded_packet = int(packet, 2).to_bytes((len(packet) + 7) // 8, byteorder='big')
-    print(f'Sent packet: {encoded_packet}')
-    print((
-        ''
-    ))
+    #print(f'Sent packet: {encoded_packet}')
 
     return encoded_packet
 

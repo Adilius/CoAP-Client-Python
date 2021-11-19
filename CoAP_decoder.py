@@ -5,7 +5,7 @@ def decode_packet(packet: bytes):
     decoded_packet = []
 
     packet_length = len(packet)
-    print(f'Packet length: {packet_length}')
+    #print(f'Packet length: {packet_length}')
 
     if len(packet) < 4:
         return "Too small packet"
